@@ -1,0 +1,15 @@
+name: Assign Issue to Copilot
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  assign-to-copilot:
+    if: contains(github.event.issue.labels.*.name, 'copilot-needed')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign Issue to Copilot
+        uses: otto-de/assign_issue_toCopilot_action@v1.0.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
