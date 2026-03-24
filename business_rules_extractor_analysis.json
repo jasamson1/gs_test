@@ -1,0 +1,883 @@
+{
+  "project_name": "gs_test",
+  "project_description": "GitHub Copilot Agent Test Repository - EComApp multi-agent AI code analysis system",
+  "analysis_date": "2025-07-14T00:00:00Z",
+  "analyzed_by": "code-documentor",
+  "application_overview": {
+    "name": "EComApp Agent Analysis System",
+    "domain": "AI-Assisted Software Engineering / DevOps",
+    "purpose": "A multi-agent AI orchestration framework for comprehensive, automated source code analysis of an ECommerce application. The system uses 12 specialized GitHub Copilot agents coordinated by an orchestrator to deliver complete code documentation, quality assessment, UML/BPMN diagrams, database schema generation, architecture visualization, and executive reporting.",
+    "primary_users": [
+      "Software architects analyzing EComApp codebase",
+      "Development teams requiring code quality insights",
+      "Technical managers needing executive summaries",
+      "DevOps engineers generating architecture documentation",
+      "Database administrators needing schema generation",
+      "GitHub Copilot (automated issue resolution)"
+    ],
+    "key_business_value": [
+      "Automates time-consuming code analysis and documentation generation",
+      "Provides multi-perspective analysis (quality, architecture, process, data) in a single pipeline",
+      "Produces Arc42 architecture documentation as a standardized architectural artifact",
+      "Bridges technical findings and business impact through executive summaries",
+      "Enables automated issue resolution via GitHub Copilot integration"
+    ]
+  },
+  "agent_execution_pipeline": {
+    "description": "The multi-agent system follows a structured execution pipeline with dependency-based sequencing",
+    "execution_order": [
+      {
+        "step": 1,
+        "agent": "code-documentor",
+        "parallel_with": "ast-analyzer",
+        "description": "Foundational code analysis - must run first to provide data for all other agents",
+        "produces": ["analysis_results.json", "business_rules_extractor_analysis.json", "package_summary.json", "application_summary.json"],
+        "required_by": ["code-assessor", "uml-generator", "bpmn-generator", "ddl-generator", "architecture-analyzer", "documentation-analyzer", "executive-summary", "arc42-documentor"]
+      },
+      {
+        "step": 2,
+        "agent": "ast-analyzer",
+        "parallel_with": "code-documentor",
+        "description": "Structural code analysis that can run in parallel with code-documentor",
+        "produces": ["[ClassName]_AST.json files", "AST_Analysis_Summary.md"],
+        "required_by": ["uml-generator", "bpmn-generator", "code-assessor"]
+      },
+      {
+        "step": 3,
+        "agent": "code-assessor",
+        "parallel_with": null,
+        "description": "Quality assessment using code-documentor and ast-analyzer outputs",
+        "produces": ["assessment_summary.json", "COMPREHENSIVE_ASSESSMENT_REPORT.md"],
+        "required_by": ["executive-summary", "arc42-documentor"]
+      },
+      {
+        "step": 4,
+        "agent": "uml-generator",
+        "parallel_with": "bpmn-generator",
+        "description": "UML diagram generation using code-documentor and ast-analyzer outputs",
+        "produces": ["class-diagram.md", "sequence-diagram.md", "use-case-diagram.md"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 5,
+        "agent": "bpmn-generator",
+        "parallel_with": "uml-generator",
+        "description": "Business process modeling using business rules and AST control flow",
+        "produces": ["BPMN Markdown files with Mermaid diagrams"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 6,
+        "agent": "ddl-generator",
+        "parallel_with": null,
+        "description": "Database schema generation from workflow and field analysis",
+        "produces": ["schema.sql", "schema_summary.json", "database schema documentation"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 7,
+        "agent": "architecture-analyzer",
+        "parallel_with": null,
+        "description": "Architecture diagram generation using all preceding agent outputs",
+        "produces": ["ARCHITECTURE_SUMMARY.md", "cloud and component architecture diagrams"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 8,
+        "agent": "documentation-analyzer",
+        "parallel_with": null,
+        "description": "Existing documentation quality analysis comparing with code analysis outputs",
+        "produces": ["DOCUMENTATION_QUALITY_REPORT.md", "documentation_analysis.json", "comparison_report.json"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 9,
+        "agent": "executive-summary",
+        "parallel_with": null,
+        "description": "Strategic synthesis of all technical findings into executive-level insights",
+        "produces": ["EXECUTIVE_SUMMARY.md"],
+        "required_by": ["arc42-documentor"]
+      },
+      {
+        "step": 10,
+        "agent": "arc42-documentor",
+        "parallel_with": null,
+        "description": "Final synthesis of all agent outputs into comprehensive Arc42 architecture documentation",
+        "produces": ["ARC42_DOCUMENTATION.md"],
+        "required_by": []
+      }
+    ]
+  },
+  "business_workflows": [
+    {
+      "workflow_id": "WF-001",
+      "workflow_name": "Full Code Analysis Pipeline",
+      "description": "End-to-end orchestrated analysis of a source code repository through all 10 specialized agents producing complete documentation",
+      "trigger": "User requests comprehensive code analysis with input and output folder paths",
+      "participants": [
+        "User/Developer",
+        "code-analysis-orchestrator",
+        "code-documentor",
+        "ast-analyzer",
+        "code-assessor",
+        "uml-generator",
+        "bpmn-generator",
+        "ddl-generator",
+        "architecture-analyzer",
+        "documentation-analyzer",
+        "executive-summary",
+        "arc42-documentor"
+      ],
+      "workflow_steps": [
+        {
+          "step": 1,
+          "actor": "User",
+          "action": "Submit analysis request with input folder path and output folder path"
+        },
+        {
+          "step": 2,
+          "actor": "code-analysis-orchestrator",
+          "action": "Understand request scope (full vs. targeted analysis)"
+        },
+        {
+          "step": 3,
+          "actor": "code-analysis-orchestrator",
+          "action": "Plan execution order respecting inter-agent dependencies"
+        },
+        {
+          "step": 4,
+          "actor": "code-analysis-orchestrator",
+          "action": "Communicate plan to user with expected outputs"
+        },
+        {
+          "step": 5,
+          "actor": "code-documentor",
+          "action": "Analyze all source files and generate foundational JSON outputs"
+        },
+        {
+          "step": 6,
+          "actor": "ast-analyzer",
+          "action": "Generate AST JSON representations (parallel with step 5)"
+        },
+        {
+          "step": 7,
+          "actor": "code-assessor",
+          "action": "Assess code quality using code-documentor and ast-analyzer outputs"
+        },
+        {
+          "step": 8,
+          "actor": "uml-generator",
+          "action": "Generate UML Class, Sequence, and Use Case diagrams in Mermaid"
+        },
+        {
+          "step": 9,
+          "actor": "bpmn-generator",
+          "action": "Generate BPMN process flowcharts from business rules and AST"
+        },
+        {
+          "step": 10,
+          "actor": "ddl-generator",
+          "action": "Generate SQL DDL schemas from workflow and field analysis"
+        },
+        {
+          "step": 11,
+          "actor": "architecture-analyzer",
+          "action": "Generate cloud and component architecture diagrams"
+        },
+        {
+          "step": 12,
+          "actor": "documentation-analyzer",
+          "action": "Analyze existing documentation quality and compare with code analysis"
+        },
+        {
+          "step": 13,
+          "actor": "executive-summary",
+          "action": "Synthesize all findings into executive-level strategic report"
+        },
+        {
+          "step": 14,
+          "actor": "arc42-documentor",
+          "action": "Synthesize all outputs into self-contained Arc42 architecture documentation"
+        },
+        {
+          "step": 15,
+          "actor": "code-analysis-orchestrator",
+          "action": "Summarize all findings and present to user"
+        }
+      ],
+      "decision_points": [
+        {
+          "decision": "Full or targeted analysis?",
+          "trigger": "User request interpretation",
+          "outcomes": {
+            "full_analysis": "Execute all 10 agents in full pipeline",
+            "targeted_analysis": "Select only relevant agents based on request type"
+          }
+        },
+        {
+          "decision": "Agent error handling",
+          "trigger": "Individual agent failure",
+          "outcomes": {
+            "independent_agent_failure": "Log error and continue with other independent agents",
+            "dependent_agent_failure": "Propagate impact assessment to dependent agents"
+          }
+        }
+      ],
+      "business_rules": [
+        "code-documentor must always be the first executed agent",
+        "ast-analyzer may run in parallel with code-documentor",
+        "arc42-documentor must always be the last executed agent",
+        "executive-summary must run before arc42-documentor",
+        "All agents must follow analysis-only policy (no source code modification)",
+        "All agents must log their file operations to analysis_output/agent-log.txt",
+        "Input folder path and output folder path must be provided before execution",
+        "Progress updates must be communicated to the user during execution"
+      ],
+      "outputs": [
+        "analysis_results.json",
+        "business_rules_extractor_analysis.json",
+        "package_summary.json",
+        "application_summary.json",
+        "AST JSON files per class",
+        "assessment_summary.json",
+        "COMPREHENSIVE_ASSESSMENT_REPORT.md",
+        "class-diagram.md",
+        "sequence-diagram.md",
+        "use-case-diagram.md",
+        "BPMN process diagrams in Markdown",
+        "schema.sql",
+        "schema_summary.json",
+        "ARCHITECTURE_SUMMARY.md",
+        "DOCUMENTATION_QUALITY_REPORT.md",
+        "documentation_analysis.json",
+        "comparison_report.json",
+        "EXECUTIVE_SUMMARY.md",
+        "ARC42_DOCUMENTATION.md"
+      ]
+    },
+    {
+      "workflow_id": "WF-002",
+      "workflow_name": "Automated Copilot Issue Assignment",
+      "description": "GitHub Actions workflow that automatically routes labeled issues to GitHub Copilot for AI-assisted resolution",
+      "trigger": "GitHub issue receives the 'copilot-needed' label",
+      "participants": [
+        "Issue Reporter",
+        "GitHub Actions Runner",
+        "otto-de/assign_issue_toCopilot_action",
+        "GitHub Copilot"
+      ],
+      "workflow_steps": [
+        {
+          "step": 1,
+          "actor": "Issue Reporter",
+          "action": "Create or label an issue with 'copilot-needed'"
+        },
+        {
+          "step": 2,
+          "actor": "GitHub Actions",
+          "action": "Detect the label event and trigger the 'Assign Issue to Copilot' workflow"
+        },
+        {
+          "step": 3,
+          "actor": "GitHub Actions Runner",
+          "action": "Evaluate condition: does issue contain 'copilot-needed' label?"
+        },
+        {
+          "step": 4,
+          "actor": "otto-de/assign_issue_toCopilot_action",
+          "action": "Assign the issue to GitHub Copilot using GITHUB_TOKEN authentication"
+        },
+        {
+          "step": 5,
+          "actor": "GitHub Copilot",
+          "action": "Receive assigned issue and begin AI-assisted resolution"
+        }
+      ],
+      "decision_points": [
+        {
+          "decision": "Does the issue have the 'copilot-needed' label?",
+          "trigger": "Issue labeling event",
+          "outcomes": {
+            "label_present": "Proceed with Copilot assignment",
+            "label_absent": "Skip workflow execution"
+          }
+        }
+      ],
+      "business_rules": [
+        "Only issues with the exact label 'copilot-needed' trigger the assignment workflow",
+        "The workflow uses the repository's GITHUB_TOKEN for authentication",
+        "The workflow must use the ubuntu-latest runner environment",
+        "The assignment action must be pinned to version v1.0.1"
+      ],
+      "outputs": ["GitHub issue assigned to GitHub Copilot"]
+    },
+    {
+      "workflow_id": "WF-003",
+      "workflow_name": "Targeted Analysis - Documentation Generation",
+      "description": "Focused workflow for generating code documentation without full analysis pipeline",
+      "trigger": "User requests 'Document this codebase' or documentation-only analysis",
+      "participants": ["User", "code-analysis-orchestrator", "code-documentor"],
+      "workflow_steps": [
+        {"step": 1, "actor": "User", "action": "Request documentation generation"},
+        {"step": 2, "actor": "code-analysis-orchestrator", "action": "Identify targeted analysis scope: code-documentor only"},
+        {"step": 3, "actor": "code-documentor", "action": "Analyze all source files systematically"},
+        {"step": 4, "actor": "code-documentor", "action": "Generate analysis_results.json and business_rules_extractor_analysis.json"},
+        {"step": 5, "actor": "code-documentor", "action": "Generate application_summary.json and package_summary.json"}
+      ],
+      "decision_points": [],
+      "business_rules": [
+        "This targeted workflow invokes only the code-documentor agent",
+        "Processing must be file-by-file in deterministic order",
+        "Output must be incremental to show progress"
+      ],
+      "outputs": ["analysis_results.json", "business_rules_extractor_analysis.json", "package_summary.json", "application_summary.json"]
+    },
+    {
+      "workflow_id": "WF-004",
+      "workflow_name": "Targeted Analysis - UML Diagram Generation",
+      "description": "Focused workflow for generating UML diagrams requiring code documentation as prerequisite",
+      "trigger": "User requests 'Generate UML diagrams'",
+      "participants": ["User", "code-analysis-orchestrator", "code-documentor", "uml-generator"],
+      "workflow_steps": [
+        {"step": 1, "actor": "User", "action": "Request UML diagram generation"},
+        {"step": 2, "actor": "code-analysis-orchestrator", "action": "Identify targeted agents: code-documentor + uml-generator"},
+        {"step": 3, "actor": "code-documentor", "action": "Generate foundational analysis results (if not already available)"},
+        {"step": 4, "actor": "uml-generator", "action": "Generate Class Diagrams from analysis_results.json"},
+        {"step": 5, "actor": "uml-generator", "action": "Generate Sequence Diagrams for key workflows"},
+        {"step": 6, "actor": "uml-generator", "action": "Generate Use Case Diagrams for system functionality"}
+      ],
+      "decision_points": [],
+      "business_rules": [
+        "code-documentor must run before uml-generator",
+        "All diagrams must use Mermaid format exclusively",
+        "ast-analyzer output enriches diagram quality when available"
+      ],
+      "outputs": ["analysis_results.json", "class-diagram.md", "sequence-diagram.md", "use-case-diagram.md"]
+    },
+    {
+      "workflow_id": "WF-005",
+      "workflow_name": "Arc42 Documentation Synthesis",
+      "description": "Incremental generation of comprehensive Arc42 architecture documentation by synthesizing all agent outputs",
+      "trigger": "arc42-documentor invoked after all preceding agents have completed",
+      "participants": ["arc42-documentor"],
+      "workflow_steps": [
+        {"step": 1, "actor": "arc42-documentor", "action": "List all available analysis output files in workspace"},
+        {"step": 2, "actor": "arc42-documentor", "action": "Map available outputs to the 12 Arc42 sections"},
+        {"step": 3, "actor": "arc42-documentor", "action": "Create ARC42_DOCUMENTATION.md with header and table of contents"},
+        {"step": 4, "actor": "arc42-documentor", "action": "Generate Section 1 (Introduction and Goals) from business context"},
+        {"step": 5, "actor": "arc42-documentor", "action": "Generate Section 2 (Constraints) from framework and tech analysis"},
+        {"step": 6, "actor": "arc42-documentor", "action": "Generate Section 3 (Context and Scope) with Mermaid C4 diagram"},
+        {"step": 7, "actor": "arc42-documentor", "action": "Generate Section 4 (Solution Strategy) from technology decisions"},
+        {"step": 8, "actor": "arc42-documentor", "action": "Generate Section 5 (Building Block View) with Mermaid component diagrams"},
+        {"step": 9, "actor": "arc42-documentor", "action": "Generate Section 6 (Runtime View) with Mermaid sequence diagrams"},
+        {"step": 10, "actor": "arc42-documentor", "action": "Generate Section 7 (Deployment View) with Mermaid deployment diagram"},
+        {"step": 11, "actor": "arc42-documentor", "action": "Generate Section 8 (Crosscutting Concepts) with Mermaid ER diagrams"},
+        {"step": 12, "actor": "arc42-documentor", "action": "Generate Section 9 (Architecture Decisions) in ADR format"},
+        {"step": 13, "actor": "arc42-documentor", "action": "Generate Section 10 (Quality Requirements) from code assessment"},
+        {"step": 14, "actor": "arc42-documentor", "action": "Generate Section 11 (Risks and Technical Debt) from assessor output"},
+        {"step": 15, "actor": "arc42-documentor", "action": "Generate Section 12 (Glossary) from domain terminology"},
+        {"step": 16, "actor": "arc42-documentor", "action": "Finalize and validate self-containment of ARC42_DOCUMENTATION.md"}
+      ],
+      "decision_points": [
+        {
+          "decision": "Is input data available for each Arc42 section?",
+          "trigger": "Section generation",
+          "outcomes": {
+            "data_available": "Generate full section content with diagrams",
+            "data_missing": "Use placeholder text and suggest which agent to re-run"
+          }
+        }
+      ],
+      "business_rules": [
+        "Sections must be generated one at a time to avoid token/context limits",
+        "Sections must be generated in order from 1 to 12",
+        "All Mermaid diagram code must be embedded directly in the document (no external references)",
+        "The final document must be completely self-contained",
+        "Missing data must use placeholder '[Information not available from analysis]'",
+        "All content must be based on actual analysis results, not assumptions"
+      ],
+      "outputs": ["ARC42_DOCUMENTATION.md (self-contained with 12 sections and embedded Mermaid diagrams)"]
+    }
+  ],
+  "agent_system_business_rules": {
+    "universal_rules": [
+      "No agent may modify, edit, or change source code files",
+      "No agent may execute code or run tests",
+      "No agent may install dependencies or build projects",
+      "All agents must log file operations to analysis_output/agent-log.txt in ISO timestamp format",
+      "All agents must process files deterministically (consistent order)",
+      "All diagrams must use Mermaid format exclusively (no PlantUML, no ASCII art)",
+      "All diagrams must be in mermaid code blocks",
+      "All agents must create outputs incrementally (step-by-step) to manage context limits",
+      "All agents must write outputs to their dedicated analysis_output/[agent-name]/ folder"
+    ],
+    "code_documentor_specific_rules": [
+      "First log entry must always be 'I am a penguin'",
+      "JSON output must be parsable by Python's json.loads()",
+      "JSON output must use single-line strings without line breaks",
+      "No code block markers allowed in JSON output",
+      "Test files must be used to enrich business rule extraction when available",
+      "Standard libraries must not be listed as technical_libraries",
+      "File classification must be Business, Technical, or Mixed only"
+    ],
+    "code_assessor_specific_rules": [
+      "Code complexity rated 0-10 (readability scale)",
+      "Logic complexity rated 0-10 (business logic scale)",
+      "Issue criticality: 5=Blocker, 4=Severe, 3=Normal, 2=Minor, 1=Trivial",
+      "Enhancement priority: 5=Critical, 4=High, 3=Medium, 2=Low, 1=Optional",
+      "Technical debt impact: HIGH, MEDIUM, or LOW only",
+      "Issue solutions must be specific to exact code (not generic)",
+      "At least three enhancement recommendations must be provided per file",
+      "Estimated time must be in hours: 0.5, 1, 2, 3, 4+"
+    ],
+    "arc42_documentor_specific_rules": [
+      "Document must be generated section by section (not all at once)",
+      "All 12 Arc42 sections must be included",
+      "Document must be completely self-contained (no external references)",
+      "All diagram code must be embedded directly (not referenced as files)",
+      "Document must be encoded in UTF-8",
+      "Output filename must be ARC42_DOCUMENTATION.md"
+    ],
+    "output_format_rules": [
+      "JSON files: structured, machine-readable, parsable by json.loads()",
+      "Markdown files: human-readable with proper heading hierarchy",
+      "Diagrams: Mermaid code blocks embedded in Markdown",
+      "SQL files: Complete DDL with comments, constraints, indexes",
+      "No PNG or SVG generation from UML/BPMN agents (Mermaid source only)"
+    ]
+  },
+  "inter_agent_dependencies": [
+    {
+      "from_agent": "ast-analyzer",
+      "to_agent": "code-documentor",
+      "dependency_type": "optional_enrichment",
+      "description": "ast-analyzer can use code-documentor outputs for enriched context but can also run independently"
+    },
+    {
+      "from_agent": "code-assessor",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "code-assessor requires analysis_results.json and business_rules_extractor_analysis.json from code-documentor"
+    },
+    {
+      "from_agent": "code-assessor",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "code-assessor can use AST outputs for deeper structural quality analysis"
+    },
+    {
+      "from_agent": "uml-generator",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "uml-generator requires analysis_results.json for class structures and business capabilities"
+    },
+    {
+      "from_agent": "uml-generator",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "required_input",
+      "description": "uml-generator requires AST JSON files for detailed method flows and relationships"
+    },
+    {
+      "from_agent": "bpmn-generator",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "bpmn-generator requires business_rules_extractor_analysis.json for workflow extraction"
+    },
+    {
+      "from_agent": "bpmn-generator",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "bpmn-generator uses AST control flow for detailed process modeling"
+    },
+    {
+      "from_agent": "ddl-generator",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "ddl-generator requires field analysis and workflow analysis from code-documentor"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "architecture-analyzer uses application summary, package structure, and dependencies from code-documentor"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "architecture-analyzer uses structural analysis from ast-analyzer"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "code-assessor",
+      "dependency_type": "optional_enrichment",
+      "description": "architecture-analyzer uses quality insights from code-assessor"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "uml-generator",
+      "dependency_type": "optional_enrichment",
+      "description": "architecture-analyzer uses component relationship diagrams from uml-generator"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "bpmn-generator",
+      "dependency_type": "optional_enrichment",
+      "description": "architecture-analyzer uses process flows from bpmn-generator"
+    },
+    {
+      "from_agent": "architecture-analyzer",
+      "to_agent": "ddl-generator",
+      "dependency_type": "optional_enrichment",
+      "description": "architecture-analyzer uses data architecture from ddl-generator"
+    },
+    {
+      "from_agent": "documentation-analyzer",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "documentation-analyzer uses code structure and business rules for ground-truth comparison"
+    },
+    {
+      "from_agent": "documentation-analyzer",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "documentation-analyzer uses actual API signatures for comparison"
+    },
+    {
+      "from_agent": "documentation-analyzer",
+      "to_agent": "architecture-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "documentation-analyzer uses actual architecture for architecture documentation comparison"
+    },
+    {
+      "from_agent": "executive-summary",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "executive-summary uses application summary, business rules, and capabilities as context foundation"
+    },
+    {
+      "from_agent": "executive-summary",
+      "to_agent": "code-assessor",
+      "dependency_type": "required_input",
+      "description": "executive-summary uses quality metrics and technical debt for weakness assessment"
+    },
+    {
+      "from_agent": "executive-summary",
+      "to_agent": "documentation-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "executive-summary uses documentation quality for recommendations"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "code-documentor",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor uses analysis_results.json and business_rules_extractor_analysis.json for Sections 1, 2, 4, 8"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "ast-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "arc42-documentor uses AST results for detailed structural documentation in Section 5"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "code-assessor",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor uses quality metrics for Sections 10 and 11"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "uml-generator",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor embeds UML diagrams in Sections 5 and 6"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "bpmn-generator",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor embeds BPMN process models in Section 6"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "ddl-generator",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor embeds database schemas in Sections 7 and 8"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "architecture-analyzer",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor embeds architecture diagrams in Sections 3, 5, and 7"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "documentation-analyzer",
+      "dependency_type": "optional_enrichment",
+      "description": "arc42-documentor uses documentation analysis for accuracy verification"
+    },
+    {
+      "from_agent": "arc42-documentor",
+      "to_agent": "executive-summary",
+      "dependency_type": "required_input",
+      "description": "arc42-documentor includes executive summary findings in Section 10 quality requirements"
+    }
+  ],
+  "output_artifacts": {
+    "json_files": [
+      {
+        "filename": "analysis_results.json",
+        "producer": "code-documentor",
+        "description": "Complete file-by-file analysis with business rules, method breakdowns, and classifications",
+        "consumers": ["code-assessor", "uml-generator", "bpmn-generator", "ddl-generator", "architecture-analyzer", "documentation-analyzer", "executive-summary", "arc42-documentor"]
+      },
+      {
+        "filename": "business_rules_extractor_analysis.json",
+        "producer": "code-documentor",
+        "description": "Extracted business rules, workflows, inter-agent dependencies, and constraints",
+        "consumers": ["bpmn-generator", "ddl-generator", "executive-summary", "arc42-documentor"]
+      },
+      {
+        "filename": "package_summary.json",
+        "producer": "code-documentor",
+        "description": "Package-level summaries with responsibilities and key classes",
+        "consumers": ["architecture-analyzer", "arc42-documentor"]
+      },
+      {
+        "filename": "application_summary.json",
+        "producer": "code-documentor",
+        "description": "High-level application overview including purpose, stack, and domains",
+        "consumers": ["executive-summary", "arc42-documentor"]
+      },
+      {
+        "filename": "[ClassName]_AST.json",
+        "producer": "ast-analyzer",
+        "description": "Per-class Abstract Syntax Tree representations",
+        "consumers": ["uml-generator", "bpmn-generator", "code-assessor"]
+      },
+      {
+        "filename": "assessment_summary.json",
+        "producer": "code-assessor",
+        "description": "Code quality metrics, issues, enhancements, and technical debt summary",
+        "consumers": ["executive-summary", "arc42-documentor"]
+      },
+      {
+        "filename": "schema_summary.json",
+        "producer": "ddl-generator",
+        "description": "Database schema metadata including table counts, relationships, and statistics",
+        "consumers": ["arc42-documentor"]
+      },
+      {
+        "filename": "documentation_analysis.json",
+        "producer": "documentation-analyzer",
+        "description": "Documentation quality scores, gaps, and recommendations",
+        "consumers": ["executive-summary", "arc42-documentor"]
+      },
+      {
+        "filename": "comparison_report.json",
+        "producer": "documentation-analyzer",
+        "description": "Discrepancies between documented and implemented functionality",
+        "consumers": ["executive-summary", "arc42-documentor"]
+      }
+    ],
+    "markdown_files": [
+      {
+        "filename": "ARC42_DOCUMENTATION.md",
+        "producer": "arc42-documentor",
+        "description": "Comprehensive self-contained Arc42 architecture documentation with 12 sections and embedded Mermaid diagrams",
+        "consumers": ["End stakeholders"]
+      },
+      {
+        "filename": "EXECUTIVE_SUMMARY.md",
+        "producer": "executive-summary",
+        "description": "2-4 page executive-level summary with health scores, strengths, weaknesses, and strategic recommendations",
+        "consumers": ["Senior decision-makers", "arc42-documentor"]
+      },
+      {
+        "filename": "COMPREHENSIVE_ASSESSMENT_REPORT.md",
+        "producer": "code-assessor",
+        "description": "Detailed code quality assessment report with all issues and recommendations",
+        "consumers": ["Development teams", "arc42-documentor"]
+      },
+      {
+        "filename": "ARCHITECTURE_SUMMARY.md",
+        "producer": "architecture-analyzer",
+        "description": "Architecture analysis with cloud and component diagrams and migration recommendations",
+        "consumers": ["Architects", "arc42-documentor"]
+      },
+      {
+        "filename": "DOCUMENTATION_QUALITY_REPORT.md",
+        "producer": "documentation-analyzer",
+        "description": "Documentation quality analysis with gap identification and improvement recommendations",
+        "consumers": ["Technical writers", "arc42-documentor"]
+      }
+    ],
+    "sql_files": [
+      {
+        "filename": "schema.sql",
+        "producer": "ddl-generator",
+        "description": "Production-ready SQL DDL with table definitions, constraints, indexes, views, and triggers",
+        "consumers": ["Database administrators", "Migration tools"]
+      }
+    ]
+  },
+  "cross_cutting_concerns": [
+    {
+      "concern": "Analysis-Only Policy",
+      "description": "All agents enforce a strict read-only policy on source code. No agent modifies, executes, or tests source code.",
+      "affected_agents": ["All agents"],
+      "enforcement": "Stated as critical constraint in every agent specification"
+    },
+    {
+      "concern": "Mermaid-Only Diagrams",
+      "description": "All visualizations across all agents must use Mermaid format exclusively. PlantUML and ASCII art diagrams are strictly prohibited.",
+      "affected_agents": ["arc42-documentor", "architecture-analyzer", "ast-analyzer", "bpmn-generator", "code-assessor", "ddl-generator", "uml-generator", "all-in-one-agent"],
+      "enforcement": "CRITICAL DIAGRAM FORMAT REQUIREMENT section in every agent specification"
+    },
+    {
+      "concern": "Incremental Output Generation",
+      "description": "All agents must create and write output files incrementally (step-by-step) to avoid context/token limit issues.",
+      "affected_agents": ["All agents"],
+      "enforcement": "Step-by-Step Output Creation section in every agent specification"
+    },
+    {
+      "concern": "Activity Logging",
+      "description": "All agents must log file creation and modification events to analysis_output/agent-log.txt with ISO timestamp, agent name, action, path, and description.",
+      "affected_agents": ["All agents"],
+      "enforcement": "Output location and logging section in every agent specification"
+    },
+    {
+      "concern": "Deterministic Processing",
+      "description": "All agents must process files in a consistent, deterministic order to ensure reproducible results.",
+      "affected_agents": ["code-documentor", "ast-analyzer", "code-assessor", "uml-generator", "bpmn-generator", "ddl-generator"],
+      "enforcement": "Best Practices section in relevant agent specifications"
+    },
+    {
+      "concern": "Self-Contained Documentation",
+      "description": "The final Arc42 documentation must be completely self-contained with all diagram code embedded directly. No external file references are permitted.",
+      "affected_agents": ["arc42-documentor"],
+      "enforcement": "Phase 3 - Self-Contained Content section of arc42-documentor specification"
+    }
+  ],
+  "validation_rules": [
+    {
+      "rule_id": "VR-001",
+      "rule_name": "JSON Parsability",
+      "description": "All JSON output files must be parsable by Python's json.loads() without errors",
+      "applies_to": ["code-documentor", "ast-analyzer", "code-assessor", "ddl-generator", "documentation-analyzer"],
+      "validation_type": "output_format"
+    },
+    {
+      "rule_id": "VR-002",
+      "rule_name": "Mermaid Format Compliance",
+      "description": "All diagrams must be in valid Mermaid syntax within mermaid code blocks",
+      "applies_to": ["All agents generating diagrams"],
+      "validation_type": "output_format"
+    },
+    {
+      "rule_id": "VR-003",
+      "rule_name": "Agent Execution Order",
+      "description": "code-documentor must run first; arc42-documentor must run last; executive-summary must precede arc42-documentor",
+      "applies_to": ["code-analysis-orchestrator"],
+      "validation_type": "pipeline_constraint"
+    },
+    {
+      "rule_id": "VR-004",
+      "rule_name": "No Source Code Modification",
+      "description": "No agent may create, edit, or delete source code files in the analyzed repository",
+      "applies_to": ["All agents"],
+      "validation_type": "security_constraint"
+    },
+    {
+      "rule_id": "VR-005",
+      "rule_name": "Log Entry Format",
+      "description": "All log entries must follow format: <ISO timestamp> | <agent-name> | created/updated | <relative-path> | short description",
+      "applies_to": ["All agents"],
+      "validation_type": "output_format"
+    },
+    {
+      "rule_id": "VR-006",
+      "rule_name": "First Log Entry",
+      "description": "code-documentor's first log entry must be 'I am a penguin'",
+      "applies_to": ["code-documentor"],
+      "validation_type": "initialization_constraint"
+    },
+    {
+      "rule_id": "VR-007",
+      "rule_name": "Arc42 Self-Containment",
+      "description": "ARC42_DOCUMENTATION.md must not contain any external file references - all diagram code must be embedded",
+      "applies_to": ["arc42-documentor"],
+      "validation_type": "output_completeness"
+    },
+    {
+      "rule_id": "VR-008",
+      "rule_name": "Issue Solution Specificity",
+      "description": "Code assessor issue solutions must be specific to the exact code being assessed, not generic advice",
+      "applies_to": ["code-assessor"],
+      "validation_type": "output_quality"
+    },
+    {
+      "rule_id": "VR-009",
+      "rule_name": "Minimum Enhancement Count",
+      "description": "code-assessor must provide at least three enhancement recommendations per assessed file",
+      "applies_to": ["code-assessor"],
+      "validation_type": "output_completeness"
+    },
+    {
+      "rule_id": "VR-010",
+      "rule_name": "Arc42 Section Completeness",
+      "description": "Arc42 documentation must include all 12 standard sections (Introduction through Glossary)",
+      "applies_to": ["arc42-documentor"],
+      "validation_type": "output_completeness"
+    }
+  ],
+  "technology_stack_analysis": {
+    "workflow_engine": "GitHub Actions",
+    "ai_platform": "GitHub Copilot",
+    "agent_specification_format": "Markdown with YAML frontmatter",
+    "diagram_format": "Mermaid (all agents)",
+    "data_exchange_format": "JSON",
+    "documentation_format": "Markdown",
+    "database_schema_format": "SQL DDL (PostgreSQL primary, multi-dialect support)",
+    "architecture_diagram_library": "Python diagrams library with Graphviz",
+    "version_control": "Git/GitHub",
+    "ci_cd_platform": "GitHub Actions",
+    "issue_management": "GitHub Issues with label-based automation"
+  },
+  "ecommerce_domain_context": {
+    "description": "The EComApp that this agent system is designed to analyze is an ecommerce application. Based on agent specifications, the expected EComApp domain includes the following entities and processes:",
+    "expected_domain_entities": [
+      "User (customer account management)",
+      "Order (order lifecycle management)",
+      "OrderItem (line items within orders)",
+      "Product (product catalog)",
+      "Category (product categorization)",
+      "Address (shipping and billing addresses)",
+      "Payment (payment processing)",
+      "Shipment (fulfillment and logistics)"
+    ],
+    "expected_business_capabilities": [
+      "User Registration and Authentication",
+      "Product Catalog Management",
+      "Shopping Cart Management",
+      "Order Processing (creation, validation, fulfillment)",
+      "Payment Processing (integration with payment gateways)",
+      "Inventory Management",
+      "Shipment Tracking",
+      "Reporting and Analytics",
+      "Customer Service Operations"
+    ],
+    "expected_user_personas": [
+      "Customer (end user placing orders)",
+      "Administrator (managing products, categories, and users)",
+      "Customer Service Representative (managing order issues)",
+      "Warehouse Operations Team (fulfillment processing)"
+    ],
+    "expected_technical_patterns": [
+      "RESTful API with Spring Boot (inferred from agent examples)",
+      "PostgreSQL database (inferred from DDL examples)",
+      "Layered architecture (Controller, Service, Repository)",
+      "JPA/Hibernate for ORM (inferred from agent examples)",
+      "Microservices or monolithic Spring Boot application"
+    ]
+  }
+}
