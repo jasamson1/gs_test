@@ -1,0 +1,2 @@
+2025-01-30T00:00:00Z | arc42-documentor | created | arc42-architecture-documentation.md | Complete Arc42 architecture documentation — all 12 sections with 15 embedded Mermaid diagrams
+2025-01-30T00:00:01Z | arc42-documentor | info | docs/arc42/ | Target directory docs/arc42/ could not be auto-created; documentation saved at repository root as arc42-architecture-documentation.md — move to docs/arc42/ using: mkdir -p docs/arc42 && mv arc42-architecture-documentation.md docs/arc42/
