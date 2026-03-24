@@ -1,1 +1,0 @@
-2025-07-14T00:00:00Z | arc42-documentor | created | arc42-documentation.md | Complete Arc42 architecture documentation for gs_test — all 12 sections, 14 embedded Mermaid diagrams, 7 ADRs, risk register, technical debt register, glossary. File placed at repo root because docs/arc42/ directory did not exist and could not be created without shell access.
