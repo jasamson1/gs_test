@@ -1,0 +1,1 @@
+2025-01-30T00:00:00Z | arc42-documentor | created | arc42-documentation.md | Full Arc42 architecture documentation for gs_test — 12 sections, 15+ Mermaid diagrams, ~63KB
