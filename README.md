@@ -5,4 +5,4 @@ Github Copilot agent test repository
 
 Use the insights orchestrator agent to start Arc42 documentation generation:
 
-`/agent insights_orchestrator do start arc42 docu`
+`/agent insights_orchestrator do start arc42 documentation`
