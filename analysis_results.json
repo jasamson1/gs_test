@@ -1,0 +1,1035 @@
+{
+  "project_name": "gs_test",
+  "project_description": "GitHub Copilot Agent Test Repository - EComApp multi-agent AI code analysis system with 12 specialized analysis agents",
+  "analysis_date": "2025-07-14T00:00:00Z",
+  "analyzed_by": "code-documentor",
+  "total_files_analyzed": 16,
+  "application_summary": {
+    "purpose": "A GitHub Copilot agent test repository that provides a complete multi-agent AI orchestration system for comprehensive source code analysis of an ECommerce application (EComApp). The system coordinates 12 specialized AI agents to deliver documentation generation, quality assessment, UML diagrams, BPMN process models, database schemas, architecture diagrams, and executive summaries.",
+    "key_functionalities": [
+      "Automated GitHub issue assignment to Copilot via label-triggered workflow",
+      "Orchestrated multi-agent code analysis pipeline with 10 specialized agents",
+      "Source code documentation and business logic extraction (analysis_results.json, business_rules_extractor_analysis.json)",
+      "Abstract Syntax Tree (AST) generation and structural analysis",
+      "Code quality assessment with complexity metrics and technical debt identification",
+      "UML diagram generation (Class, Sequence, Use Case) in Mermaid format",
+      "BPMN 2.0 business process modeling with Mermaid flowcharts",
+      "Cloud and component architecture diagram generation",
+      "SQL DDL database schema generation from workflow analysis",
+      "Existing documentation quality analysis and comparison with code",
+      "Executive-level summary generation with strategic recommendations",
+      "Comprehensive Arc42 architecture documentation synthesis"
+    ],
+    "technical_stack": [
+      "GitHub Actions (CI/CD workflow automation)",
+      "GitHub Copilot (AI agent platform)",
+      "Markdown (agent specification format)",
+      "YAML (workflow configuration)",
+      "JSON (structured analysis outputs)",
+      "Mermaid (diagram format for all visualizations)",
+      "Python diagrams library (architecture diagram code generation)",
+      "SQL DDL (database schema generation)"
+    ],
+    "architecture_patterns": [
+      "Multi-agent orchestration pattern with a central coordinator (orchestrator)",
+      "Pipeline pattern for sequential agent execution with dependency management",
+      "Parallel execution pattern (ast-analyzer can run concurrently with code-documentor)",
+      "Synthesis pattern where arc42-documentor aggregates all agent outputs",
+      "Analysis-only read-only pattern (no agent modifies source code)",
+      "Incremental output generation pattern (step-by-step file creation)"
+    ],
+    "main_business_domains": [
+      "Code Documentation and Business Logic Extraction",
+      "Software Quality Assessment and Technical Debt Management",
+      "Architecture Visualization and Documentation",
+      "Database Schema Design",
+      "Business Process Modeling",
+      "Executive Reporting and Strategic Recommendations",
+      "Documentation Quality Analysis"
+    ]
+  },
+  "package_summary": {
+    ".github/agents": {
+      "description": "AI agent specification definitions in Markdown format with YAML frontmatter. Each file defines a specialized agent with its name, description, tools, responsibilities, input/output contracts, and operational rules.",
+      "total_agents": 12,
+      "agent_list": [
+        "orchestrator.agent.md",
+        "all-in-one-agent.md",
+        "arc42-documentor.agent.md",
+        "architecture-analyzer.agent.md",
+        "ast-analyzer.agent.md",
+        "bpmn-generator.agent.md",
+        "code-assessor.agent.md",
+        "code-documentor.agent.md",
+        "ddl-generator.agent.md",
+        "documentation-analyzer.agent.md",
+        "executive-summary.agent.md",
+        "uml-generator.agent.md"
+      ]
+    },
+    ".github/workflows": {
+      "description": "GitHub Actions CI/CD workflow definitions. Contains the Copilot issue assignment automation workflow.",
+      "total_workflows": 1
+    },
+    ".github/hooks": {
+      "description": "Git hook placeholder directory. Contains an empty .keep file to maintain directory structure in version control.",
+      "total_files": 1
+    },
+    ".github/skills": {
+      "description": "GitHub Copilot skills placeholder directory. Contains an empty .keep file to maintain directory structure in version control.",
+      "total_files": 1
+    }
+  },
+  "files": [
+    {
+      "file_path": "README.md",
+      "summary": "Minimal project description file that identifies the repository as the gs_test GitHub Copilot agent test repository.",
+      "category": "Technical",
+      "description": "The README.md serves as the entry point for the gs_test repository, providing only the project name and a single descriptive tagline. It identifies the project as a GitHub Copilot agent test repository but provides no installation, usage, architecture, or contribution documentation. The minimal content reflects the early stage or intentionally sparse nature of this test repository.",
+      "business_rules": [],
+      "technical_libraries": [],
+      "business_capability": "Documentation",
+      "sub_capability": "Project Identification",
+      "method_breakdown": []
+    },
+    {
+      "file_path": ".github/workflows/copilot.yml",
+      "summary": "GitHub Actions workflow that automatically assigns GitHub issues to GitHub Copilot when labeled with 'copilot-needed'.",
+      "category": "Technical",
+      "description": "This CI/CD workflow automates the delegation of GitHub issues to GitHub Copilot for AI-assisted resolution. It listens for issue labeling events and triggers when the 'copilot-needed' label is applied. The workflow uses a third-party action (otto-de/assign_issue_toCopilot_action) to perform the actual assignment using the repository's GitHub token for authentication. This enables seamless integration between issue tracking and AI-powered development assistance.",
+      "business_rules": [
+        "Issues labeled with 'copilot-needed' must be automatically assigned to GitHub Copilot",
+        "The workflow triggers exclusively on issue labeling events (not on issue creation or other events)",
+        "Authentication must use the GITHUB_TOKEN secret from repository secrets",
+        "The assignment action version must be pinned to v1.0.1 for stability"
+      ],
+      "technical_libraries": [
+        "otto-de/assign_issue_toCopilot_action@v1.0.1"
+      ],
+      "business_capability": "Issue Management",
+      "sub_capability": "Automated Issue Assignment",
+      "method_breakdown": [
+        {
+          "method_name": "assign-to-copilot (job)",
+          "summary": "Evaluates if the triggering issue contains the 'copilot-needed' label and if so invokes the Copilot assignment action",
+          "parameters": [
+            "github.event.issue.labels (array): Labels on the triggering issue",
+            "github_token (secret): Repository GITHUB_TOKEN for authentication"
+          ],
+          "returns": "Assigns the GitHub issue to GitHub Copilot",
+          "dependencies": [
+            "otto-de/assign_issue_toCopilot_action@v1.0.1",
+            "GitHub Actions runner (ubuntu-latest)"
+          ],
+          "significance": "Core automation that bridges issue tracking with AI-assisted development, enabling GitHub Copilot to automatically pick up and process labeled issues"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/orchestrator.agent.md",
+      "summary": "Master coordinator agent specification that manages and sequences 10 specialized analysis agents for comprehensive, multi-faceted source code analysis.",
+      "category": "Business",
+      "description": "The orchestrator agent acts as the central intelligence for coordinating a complete code analysis pipeline. It determines which agents are needed for a given analysis request, enforces execution order and dependency rules between agents, and delegates final documentation synthesis to the arc42-documentor. The orchestrator supports both full-pipeline execution and targeted analysis for specific requests (e.g., UML only, quality only). It communicates progress updates to users and maintains systematic, transparent operation. The orchestrator itself does not perform analysis but instead coordinates specialized agents and synthesizes their communication.",
+      "business_rules": [
+        "code-documentor must always execute first as the foundational data provider for all other agents",
+        "ast-analyzer may execute in parallel with code-documentor",
+        "code-assessor requires code-documentor output before it can run",
+        "uml-generator requires outputs from both code-documentor and ast-analyzer",
+        "bpmn-generator requires code-documentor output before it can run",
+        "ddl-generator requires workflow analysis output from code-documentor",
+        "architecture-analyzer requires outputs from all preceding agents",
+        "documentation-analyzer analyzes existing docs and compares against code analysis outputs",
+        "executive-summary must run after all technical analysis agents and before arc42-documentor",
+        "arc42-documentor must always run as the final synthesis step",
+        "No source code files may be modified by any orchestrated agent",
+        "No code execution or test running is permitted by any agent",
+        "Analysis must proceed file-by-file in a deterministic, consistent order",
+        "Input folder path and output folder path must be provided by the user",
+        "Targeted analysis selects only relevant agents based on request type",
+        "The orchestrator must provide progress updates during long-running analyses",
+        "Errors in one agent must not halt execution of other independent agents"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Code Analysis Orchestration",
+      "sub_capability": "Multi-Agent Pipeline Coordination",
+      "method_breakdown": [
+        {
+          "method_name": "Understand the Request",
+          "summary": "Identifies which analysis modules are needed based on user request and determines full vs. targeted analysis scope",
+          "parameters": [
+            "user_request (string): Natural language description of desired analysis"
+          ],
+          "returns": "Analysis plan specifying which agents to execute",
+          "dependencies": ["User input"],
+          "significance": "Critical first step that determines the scope and efficiency of the entire analysis pipeline"
+        },
+        {
+          "method_name": "Plan the Execution",
+          "summary": "Determines execution order respecting inter-agent dependencies and identifying opportunities for parallel execution",
+          "parameters": [
+            "analysis_scope (list): Agents identified as needed",
+            "dependency_map (object): Known dependencies between agents"
+          ],
+          "returns": "Ordered execution plan with dependency annotations",
+          "dependencies": ["Agent dependency rules"],
+          "significance": "Ensures correct sequencing and optimal parallelization of the analysis pipeline"
+        },
+        {
+          "method_name": "Coordinate Agents",
+          "summary": "Invokes specialized agents in the planned sequence using the runSubagent tool, communicating status to users at each step",
+          "parameters": [
+            "execution_plan (list): Ordered list of agents to invoke",
+            "input_path (string): Source code input folder path",
+            "output_path (string): Analysis output folder path"
+          ],
+          "returns": "Aggregated analysis outputs from all invoked agents",
+          "dependencies": [
+            "code-documentor", "ast-analyzer", "code-assessor", "uml-generator",
+            "bpmn-generator", "ddl-generator", "architecture-analyzer",
+            "documentation-analyzer", "executive-summary", "arc42-documentor"
+          ],
+          "significance": "Core orchestration function that drives the multi-agent analysis pipeline"
+        },
+        {
+          "method_name": "Delegate Final Synthesis",
+          "summary": "Calls the arc42-documentor agent as the final step to synthesize all agent outputs into comprehensive Arc42 architecture documentation",
+          "parameters": [
+            "all_agent_outputs (object): Collected outputs from all preceding agents"
+          ],
+          "returns": "ARC42_DOCUMENTATION.md - complete self-contained architecture document",
+          "dependencies": ["arc42-documentor"],
+          "significance": "Produces the final deliverable that integrates all analysis perspectives into a single authoritative document"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/all-in-one-agent.md",
+      "summary": "Comprehensive combined analysis agent that integrates all 10 specialized agent capabilities into a single unified workflow for complete code analysis.",
+      "category": "Business",
+      "description": "The all-in-one-code-analyzer provides the complete analysis pipeline as a single agent, combining documentation extraction, quality assessment, AST generation, UML/BPMN diagram creation, architecture visualization, database schema generation, documentation analysis, executive summarization, and Arc42 documentation synthesis. This agent is an alternative to using the orchestrator with separate agents, providing the same functionality in a single coordinated execution. It supports both full analysis and targeted module selection based on user requests. All outputs are organized in the same structured folder hierarchy as the individual agents use.",
+      "business_rules": [
+        "Code documentation must always be the first step in full analysis execution",
+        "AST generation can execute in parallel with code documentation",
+        "All diagrams must use Mermaid format exclusively (no PlantUML, no ASCII art)",
+        "Source code files must never be modified",
+        "Code must never be executed or tested",
+        "Output files must be organized in analysis_output/ with agent-specific subdirectories",
+        "All file creation and modification must be logged to analysis_output/agent-log.txt",
+        "Processing must be deterministic and file-by-file",
+        "Every issue identified must have an actionable recommendation",
+        "Arc42 documentation must be completely self-contained with embedded Mermaid diagrams",
+        "No external file references are allowed in Arc42 documentation",
+        "If analysis is interrupted, resume from last checkpoint",
+        "If a file is too large, process in chunks"
+      ],
+      "technical_libraries": [
+        "Python diagrams library (for architecture diagram code generation)",
+        "Graphviz (required for architecture diagram rendering)"
+      ],
+      "business_capability": "Comprehensive Code Analysis",
+      "sub_capability": "Unified Multi-Capability Analysis",
+      "method_breakdown": [
+        {
+          "method_name": "Code Documentation and Business Logic Extraction",
+          "summary": "Analyzes source code files to extract business rules, workflows, domain logic and generates analysis_results.json and business_rules_extractor_analysis.json",
+          "parameters": ["source_code_path (string): Path to source files"],
+          "returns": "analysis_results.json, business_rules_extractor_analysis.json, package_summary.json, application_summary.json",
+          "dependencies": ["Source code files"],
+          "significance": "Foundational step that all other analysis modules depend upon"
+        },
+        {
+          "method_name": "Quality Assessment and Technical Debt Analysis",
+          "summary": "Evaluates code quality on a 0-10 scale, identifies issues with 1-5 criticality ratings, documents technical debt, and provides enhancement recommendations",
+          "parameters": ["source_code_path (string): Path to source files", "analysis_results (object): Output from documentation step"],
+          "returns": "assessment_summary.json, COMPREHENSIVE_ASSESSMENT_REPORT.md",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Identifies actionable improvements and quantifies technical debt for prioritization"
+        },
+        {
+          "method_name": "AST Generation",
+          "summary": "Creates detailed JSON representations of Abstract Syntax Trees capturing classes, methods, statements, control flow, and dependencies",
+          "parameters": ["source_code_path (string): Path to source files"],
+          "returns": "[ClassName]_AST.json files per source file, AST_Analysis_Summary.md",
+          "dependencies": ["Source code files"],
+          "significance": "Provides deep structural analysis used by UML generator, BPMN generator, and other downstream agents"
+        },
+        {
+          "method_name": "UML Diagram Generation",
+          "summary": "Generates Class, Sequence, and Use Case diagrams in Mermaid format from code structure analysis",
+          "parameters": ["analysis_results (object): From documentation step", "ast_results (object): From AST step"],
+          "returns": "class-diagram.md, sequence-diagram.md, use-case-diagram.md with embedded Mermaid code",
+          "dependencies": ["analysis_results.json", "AST JSON files"],
+          "significance": "Provides visual representation of system structure and behavior for stakeholder communication"
+        },
+        {
+          "method_name": "BPMN Process Modeling",
+          "summary": "Translates business workflows and code logic into Mermaid flowchart diagrams representing business processes",
+          "parameters": ["business_rules (object): From documentation step", "ast_results (object): From AST step"],
+          "returns": "BPMN Markdown files with embedded Mermaid flowcharts",
+          "dependencies": ["business_rules_extractor_analysis.json", "AST JSON files"],
+          "significance": "Bridges technical implementation and business process documentation for stakeholder alignment"
+        },
+        {
+          "method_name": "Architecture Visualization",
+          "summary": "Creates cloud architecture diagrams (AWS/Azure/GCP) and component architecture diagrams in Mermaid format",
+          "parameters": ["all_previous_outputs (object): Combined outputs from all preceding steps"],
+          "returns": "ARCHITECTURE_SUMMARY.md with embedded Mermaid architecture diagrams",
+          "dependencies": ["All preceding agent outputs"],
+          "significance": "Communicates infrastructure and deployment architecture to technical and business stakeholders"
+        },
+        {
+          "method_name": "Database Schema Generation",
+          "summary": "Generates optimized SQL DDL files from workflow analysis and field documentation for multiple database dialects",
+          "parameters": ["workflow_analysis (object): From documentation step"],
+          "returns": "schema.sql, schema_summary.json, database schema Markdown documentation",
+          "dependencies": ["business_rules_extractor_analysis.json"],
+          "significance": "Provides database schema definitions ready for review and deployment"
+        },
+        {
+          "method_name": "Documentation Quality Analysis",
+          "summary": "Analyzes existing project documentation for quality, completeness, accuracy, and alignment with code implementation",
+          "parameters": ["existing_docs (list): All project documentation files", "code_analysis (object): From documentation step"],
+          "returns": "DOCUMENTATION_QUALITY_REPORT.md, documentation_analysis.json, comparison_report.json",
+          "dependencies": ["All preceding agent outputs", "Existing documentation files"],
+          "significance": "Identifies documentation gaps and discrepancies that could mislead developers"
+        },
+        {
+          "method_name": "Executive Summary Generation",
+          "summary": "Synthesizes all technical findings into executive-level insights with strengths, weaknesses, strategic recommendations, and action plans",
+          "parameters": ["all_technical_outputs (object): Combined outputs from all preceding analysis steps"],
+          "returns": "EXECUTIVE_SUMMARY.md with prioritized recommendations and metrics dashboard",
+          "dependencies": ["All preceding agent outputs"],
+          "significance": "Translates technical findings into business-relevant insights for decision-makers"
+        },
+        {
+          "method_name": "Arc42 Architecture Documentation",
+          "summary": "Synthesizes all analysis outputs into a comprehensive, self-contained Arc42 architecture documentation with embedded Mermaid diagrams",
+          "parameters": ["all_agent_outputs (object): Complete outputs from all preceding agents including executive summary"],
+          "returns": "ARC42_DOCUMENTATION.md - complete self-contained architecture document with 12 sections",
+          "dependencies": ["All preceding agent outputs"],
+          "significance": "Produces the definitive architectural reference document integrating all analysis perspectives"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/arc42-documentor.agent.md",
+      "summary": "Specialized agent for synthesizing outputs from all analysis agents into a comprehensive, self-contained Arc42 architecture documentation with embedded Mermaid diagrams.",
+      "category": "Business",
+      "description": "The arc42-documentor agent serves as the final synthesis step in the analysis pipeline, consuming outputs from all 8 preceding specialized agents and assembling them into a complete Arc42 architecture documentation. It generates all 12 Arc42 sections incrementally to avoid token/context limit issues, embedding all diagram code directly in the Markdown document. The agent enforces strict self-containment (no external file references) and uses only Mermaid syntax for all diagrams. It is always the last agent to run in any full analysis workflow.",
+      "business_rules": [
+        "arc42-documentor must always be the final agent executed in any full analysis workflow",
+        "All diagrams must use Mermaid format exclusively (never PlantUML or ASCII art)",
+        "The final document must be completely self-contained with no external file references",
+        "All Mermaid diagram code must be embedded directly in ARC42_DOCUMENTATION.md",
+        "Documentation must be generated incrementally one section at a time to avoid token limits",
+        "Sections must be generated in order from 1 (Introduction) through 12 (Glossary)",
+        "If input data is missing, use placeholder text '[Information not available from analysis]'",
+        "Missing data must be noted with suggestions for which agent to re-run",
+        "All content must be based on actual analysis results, not assumptions",
+        "Architecture documentation must cover all 12 Arc42 sections",
+        "Output must be saved to ARC42_DOCUMENTATION.md",
+        "Output must be encoded in UTF-8",
+        "All outputs must be logged to analysis_output/agent-log.txt"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Architecture Documentation",
+      "sub_capability": "Arc42 Documentation Synthesis",
+      "method_breakdown": [
+        {
+          "method_name": "Phase 1 - Planning",
+          "summary": "Lists available analysis outputs, maps them to Arc42 sections, and saves an execution plan",
+          "parameters": ["workspace_outputs (list): All available analysis output files from preceding agents"],
+          "returns": "Execution plan mapping analysis files to Arc42 sections",
+          "dependencies": ["All preceding agent output files"],
+          "significance": "Ensures systematic coverage of all 12 Arc42 sections with available data"
+        },
+        {
+          "method_name": "Phase 2 - Initialize File",
+          "summary": "Creates ARC42_DOCUMENTATION.md with header and table of contents as the initial scaffold",
+          "parameters": ["project_name (string): Name of analyzed project", "version (string): Documentation version", "date (string): Generation date"],
+          "returns": "ARC42_DOCUMENTATION.md with header and 12-section table of contents",
+          "dependencies": [],
+          "significance": "Establishes the document structure before incremental content addition"
+        },
+        {
+          "method_name": "Phase 3 - Incremental Section Generation",
+          "summary": "Generates each of the 12 Arc42 sections sequentially, reading relevant inputs, embedding diagrams, and appending to the document",
+          "parameters": [
+            "section_number (int): 1-12 identifying current Arc42 section",
+            "relevant_inputs (object): Analysis outputs relevant to current section"
+          ],
+          "returns": "Section content appended to ARC42_DOCUMENTATION.md with embedded Mermaid diagrams",
+          "dependencies": [
+            "analysis_results.json (code-documentor)",
+            "business_rules_extractor_analysis.json (code-documentor)",
+            "AST analysis results (ast-analyzer)",
+            "Code quality metrics (code-assessor)",
+            "UML diagrams (uml-generator)",
+            "BPMN process models (bpmn-generator)",
+            "DDL schemas (ddl-generator)",
+            "Architecture diagrams (architecture-analyzer)",
+            "Documentation analysis (documentation-analyzer)"
+          ],
+          "significance": "Core generation loop that produces all 12 sections of the final architecture document"
+        },
+        {
+          "method_name": "Phase 4 - Finalization",
+          "summary": "Reviews the complete document, verifies all diagrams are embedded (no external references), and confirms self-containment",
+          "parameters": ["generated_document (string): Complete ARC42_DOCUMENTATION.md content"],
+          "returns": "Validated, self-contained ARC42_DOCUMENTATION.md",
+          "dependencies": [],
+          "significance": "Ensures the final document is complete, consistent, and fully self-contained"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/architecture-analyzer.agent.md",
+      "summary": "Specialized agent for generating cloud and component architecture diagrams in Mermaid format by analyzing application structure, dependencies, and technology stack.",
+      "category": "Business",
+      "description": "The architecture-analyzer agent produces two types of architecture diagrams: cloud infrastructure diagrams (mapping application components to cloud services on AWS, Azure, or GCP) and component architecture diagrams (showing internal application structure). It reads code analysis outputs from all preceding agents to understand the technology stack, architecture patterns, and component relationships. The agent generates Mermaid diagrams as well as Python diagrams library code for higher-fidelity PNG rendering. It also provides cloud migration recommendations based on detected technologies and provides JSON metadata about the architecture.",
+      "business_rules": [
+        "All diagrams must use Mermaid format exclusively (never PlantUML or ASCII art)",
+        "Cloud architecture diagrams must map application components to appropriate cloud services",
+        "Component architecture diagrams must show all application layers (frontend, backend, data, integration)",
+        "Architecture must be detected from code analysis results, not assumed",
+        "Architecture best practices must be documented (scalability, HA, security, performance, cost, observability)",
+        "Migration recommendations must be categorized (Compute, Database, Storage, Caching, Monitoring)",
+        "Each migration recommendation must include benefit and effort assessment",
+        "The agent must not deploy infrastructure or modify source code",
+        "Graphviz must be installed for PNG rendering (documented as requirement)",
+        "Architecture diagrams output is consumed by arc42-documentor for final documentation"
+      ],
+      "technical_libraries": [
+        "Python diagrams library",
+        "Graphviz"
+      ],
+      "business_capability": "Architecture Visualization",
+      "sub_capability": "Cloud and Component Architecture Diagramming",
+      "method_breakdown": [
+        {
+          "method_name": "Analyze Input Sources",
+          "summary": "Reads application summary, package structure, dependencies, and business capabilities from all preceding agent outputs",
+          "parameters": ["all_agent_outputs (object): Combined outputs from code-documentor, ast-analyzer, code-assessor, uml-generator, bpmn-generator, ddl-generator"],
+          "returns": "Extracted technology stack, architecture patterns, and component information",
+          "dependencies": ["code-documentor", "ast-analyzer", "code-assessor", "uml-generator", "bpmn-generator", "ddl-generator"],
+          "significance": "Grounds architecture diagrams in actual code analysis rather than assumptions"
+        },
+        {
+          "method_name": "Identify Architecture Patterns",
+          "summary": "Detects the architectural pattern (Monolithic, Layered, Microservices, Event-Driven, Serverless) from code structure",
+          "parameters": ["code_structure (object): From code analysis"],
+          "returns": "Detected architecture pattern with confidence level",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Determines the type of architecture diagram to generate"
+        },
+        {
+          "method_name": "Map Components to Cloud Services",
+          "summary": "Translates detected application components to equivalent cloud services for AWS, Azure, or GCP",
+          "parameters": ["components (list): Detected application components", "cloud_provider (string): Target cloud provider"],
+          "returns": "Component-to-cloud-service mapping for diagram generation",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Bridges application architecture to cloud deployment recommendations"
+        },
+        {
+          "method_name": "Generate Cloud Architecture Diagram",
+          "summary": "Produces Mermaid cloud architecture diagram and Python diagrams library code for the detected/target cloud provider",
+          "parameters": ["cloud_mapping (object): Component-to-service mapping", "cloud_provider (string): AWS/Azure/GCP"],
+          "returns": "Mermaid diagram code and Python diagrams code in JSON format with metadata",
+          "dependencies": ["Python diagrams library", "Graphviz"],
+          "significance": "Primary deliverable showing infrastructure deployment topology"
+        },
+        {
+          "method_name": "Generate Component Architecture Diagram",
+          "summary": "Produces Mermaid component diagram showing application layers and internal component relationships",
+          "parameters": ["application_structure (object): Detected components and layers"],
+          "returns": "Mermaid component architecture diagram in Markdown format",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Shows internal application structure for developer communication"
+        },
+        {
+          "method_name": "Generate Migration Recommendations",
+          "summary": "Produces categorized cloud migration recommendations with benefits and effort estimates based on code analysis",
+          "parameters": ["technology_stack (object): Detected technologies and patterns"],
+          "returns": "JSON array of migration recommendations categorized by area",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Provides actionable cloud adoption guidance grounded in code analysis"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/ast-analyzer.agent.md",
+      "summary": "Specialized agent for generating detailed Abstract Syntax Tree (AST) JSON representations from source code, capturing complete structural analysis of classes, methods, statements, control flow, and dependencies.",
+      "category": "Technical",
+      "description": "The ast-analyzer agent parses source code files and produces structured JSON AST representations that capture all code elements: type declarations, method definitions with complete logic flow, control flow structures, variable declarations, and import dependencies. It supports any programming language and adapts its analysis approach accordingly. The AST output is used by downstream agents (uml-generator, bpmn-generator, code-documentor) for structural analysis and diagram generation. The agent can work independently from source code or leverage code-documentor outputs for enriched context.",
+      "business_rules": [
+        "AST must include complete representation of all structural elements (classes, interfaces, enums, methods, fields)",
+        "All statement types must be captured: conditionals, loops, try-catch, assignments, method invocations, return statements",
+        "Return statements must always include a 'value' field (null if no return value)",
+        "Exact type information must be preserved in the AST",
+        "All annotations/decorators must be documented with their parameters",
+        "Generic type parameters and bounds must be captured",
+        "Nested structures (inner classes, anonymous classes, closures) must be properly represented",
+        "Source code files must never be modified",
+        "Code must never be executed or interpreted",
+        "AST files must be output as valid JSON parsable by Python's json.loads()",
+        "One AST JSON file must be generated per source code file",
+        "All outputs must be written to analysis_output/ast-analyzer/"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Structural Code Analysis",
+      "sub_capability": "Abstract Syntax Tree Generation",
+      "method_breakdown": [
+        {
+          "method_name": "Parse Type Declarations",
+          "summary": "Extracts all class, interface, enum, and struct declarations with their modifiers, parent types, and implemented interfaces",
+          "parameters": ["source_file (string): Source code file content"],
+          "returns": "Array of TypeDeclaration objects with name, modifiers, annotations, parent, interfaces",
+          "dependencies": [],
+          "significance": "Foundation of the AST representing the top-level type structure of each file"
+        },
+        {
+          "method_name": "Parse Method Definitions",
+          "summary": "Extracts all method and function definitions including modifiers, return types, parameters, annotations, Javadoc, and complete body statement sequences",
+          "parameters": ["type_declaration (object): Parent type containing the method"],
+          "returns": "Array of MethodDeclaration objects with complete body statement AST",
+          "dependencies": [],
+          "significance": "Most critical AST component used by BPMN generator for workflow extraction and UML generator for sequence diagrams"
+        },
+        {
+          "method_name": "Parse Control Flow Statements",
+          "summary": "Extracts if/else, switch, while, for, do-while, and try-catch-finally statements with their conditions, bodies, and branches",
+          "parameters": ["statement_node (object): Statement node from the parse tree"],
+          "returns": "Typed statement objects (IfStatement, WhileStatement, TryStatement, etc.) with condition and body",
+          "dependencies": [],
+          "significance": "Enables business process extraction and complexity calculation by capturing all decision points and loops"
+        },
+        {
+          "method_name": "Parse Field Declarations",
+          "summary": "Extracts class and instance field declarations with their types, modifiers, initial values, and annotations",
+          "parameters": ["type_declaration (object): Parent type containing the field"],
+          "returns": "Array of FieldDeclaration objects with name, type, modifiers, value, annotations",
+          "dependencies": [],
+          "significance": "Provides data structure information for DDL generation and class diagram creation"
+        },
+        {
+          "method_name": "Extract Dependencies",
+          "summary": "Extracts all import statements, include directives, and using statements representing external dependencies",
+          "parameters": ["source_file (string): Source code file content"],
+          "returns": "Array of import/dependency strings",
+          "dependencies": [],
+          "significance": "Provides dependency information for architecture analysis and component relationship diagrams"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/bpmn-generator.agent.md",
+      "summary": "Specialized BPMN process modeling agent that translates source code workflows, business rules, and control flow logic into Mermaid flowchart diagrams representing business processes.",
+      "category": "Business",
+      "description": "The bpmn-generator agent creates visual representations of business processes extracted from source code analysis. It maps code constructs (if-else → decision gateways, loops → loop tasks, try-catch → error paths, method chains → sequence flows) to BPMN 2.0 elements represented as Mermaid flowcharts. The agent uses business rules from code-documentor and AST control flow from ast-analyzer as inputs. It supports BPMN patterns including orchestration, choreography, saga, and event-driven processes. All output diagrams use Mermaid syntax exclusively and are embedded in Markdown documentation files.",
+      "business_rules": [
+        "All BPMN diagrams must use Mermaid flowchart syntax exclusively (never BPMN XML, PlantUML, or ASCII art)",
+        "Every process flow must have clearly labeled start and end events",
+        "All gateway outgoing flows must be labeled with their conditions",
+        "Error handling paths must be included for processes with exception handling",
+        "Swimlanes must be used to show participant responsibilities",
+        "Business terminology must be used in node labels (not technical jargon)",
+        "BPMN diagrams must represent business processes, not implementation details",
+        "Every code path must eventually reach an end event",
+        "Process elements must include: start events, end events, tasks, gateways, flows",
+        "Process metadata (participants, error types, element counts) must be documented",
+        "Source code must never be modified",
+        "Output must be written to analysis_output/bpmn-generator/"
+      ],
+      "technical_libraries": ["Graphviz (optional, for PNG rendering)"],
+      "business_capability": "Business Process Modeling",
+      "sub_capability": "Code-to-BPMN Workflow Visualization",
+      "method_breakdown": [
+        {
+          "method_name": "Analyze Input Sources",
+          "summary": "Reads business rules from code-documentor and AST control flow from ast-analyzer to identify process boundaries and workflow steps",
+          "parameters": [
+            "business_rules_json (object): From code-documentor",
+            "ast_json (object): From ast-analyzer"
+          ],
+          "returns": "Process definitions with steps, decisions, and participants",
+          "dependencies": ["business_rules_extractor_analysis.json", "AST JSON files"],
+          "significance": "Grounds BPMN diagrams in actual code-extracted business logic"
+        },
+        {
+          "method_name": "Identify Process Boundaries",
+          "summary": "Identifies entry points (controllers, API endpoints), exit points (return statements, final states), and external system interactions",
+          "parameters": ["code_structure (object): From analysis results"],
+          "returns": "Process boundary definitions with start/end events and external interactions",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Determines the scope of each BPMN process model"
+        },
+        {
+          "method_name": "Map Code Constructs to BPMN Elements",
+          "summary": "Translates code constructs to BPMN elements: methods→tasks, conditionals→gateways, loops→loop tasks, exceptions→error events",
+          "parameters": ["ast_nodes (list): AST statement nodes to translate"],
+          "returns": "BPMN element definitions ready for Mermaid rendering",
+          "dependencies": ["AST JSON files"],
+          "significance": "Core translation function that bridges code logic and business process notation"
+        },
+        {
+          "method_name": "Define Swimlanes",
+          "summary": "Creates swimlane definitions based on user roles, external systems, and internal services identified in the code",
+          "parameters": ["participants (list): Identified process participants from code analysis"],
+          "returns": "Swimlane structure as Mermaid subgraphs",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Improves diagram readability by organizing responsibilities by participant"
+        },
+        {
+          "method_name": "Generate Mermaid Flowchart",
+          "summary": "Produces final Mermaid flowchart code with proper styling for start/end events, gateways, and tasks, along with JSON metadata",
+          "parameters": [
+            "process_elements (object): Mapped BPMN elements",
+            "swimlanes (object): Participant lane definitions"
+          ],
+          "returns": "JSON with Mermaid code, metadata (element counts, participants, error types), and Markdown documentation file",
+          "dependencies": [],
+          "significance": "Primary deliverable for business process visualization"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/code-assessor.agent.md",
+      "summary": "Specialized code quality assessment agent that evaluates complexity, identifies issues with severity ratings, documents technical debt, and provides detailed, actionable enhancement recommendations.",
+      "category": "Business",
+      "description": "The code-assessor agent performs comprehensive quality evaluation of source code using a standardized assessment framework. It rates code complexity and logic complexity on 0-10 scales, identifies issues categorized by type (security, performance, maintainability, etc.) with 1-5 criticality ratings, documents technical debt by category (code, design, test, documentation, infrastructure), and recommends enhancements with priority ratings and code examples. All solutions provided must be specific to the exact code being assessed, not generic. The agent leverages code-documentor and ast-analyzer outputs for enriched analysis context.",
+      "business_rules": [
+        "Code complexity must be rated on a 0-10 scale (0-2 very simple, 9-10 very complex)",
+        "Logic complexity must be rated on a 0-10 scale separate from code complexity",
+        "Every detected issue must have: line number, issue type, message, criticality (1-5), specific solution, and estimated time",
+        "Issue solutions must be specific to the exact code being assessed (not generic advice)",
+        "Issue solution descriptions must explain HOW to fix it and WHAT benefits it brings",
+        "Issue solutions should include code examples where applicable",
+        "Issue criticality 5 (Blocker) is reserved for security vulnerabilities, data corruption, system crashes",
+        "Issue criticality 4 (Severe) covers performance bottlenecks, memory leaks, data integrity issues",
+        "Issue criticality 3 (Normal) covers maintainability issues, missing error handling, inefficient algorithms",
+        "Issue criticality 2 (Minor) covers naming inconsistencies and minor readability issues",
+        "Issue criticality 1 (Trivial) covers formatting and style preferences",
+        "At least three enhancement recommendations must be provided per file",
+        "Enhancement priorities must be rated 1-5 with code examples",
+        "Technical debt must be categorized: Code, Design, Test, Documentation, Infrastructure",
+        "Technical debt items must have: type, description, impact (HIGH/MEDIUM/LOW), estimated fix time",
+        "Source code files must never be modified",
+        "Output must be written to analysis_output/code-assessor/"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Code Quality Management",
+      "sub_capability": "Quality Assessment and Technical Debt Analysis",
+      "method_breakdown": [
+        {
+          "method_name": "Complexity Analysis",
+          "summary": "Rates code complexity (readability) and logic complexity (business logic difficulty) on independent 0-10 scales",
+          "parameters": ["source_file (string): Source code content", "analysis_context (object): From code-documentor"],
+          "returns": "code_complexity (int 0-10), logic_complexity (int 0-10)",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Provides quantifiable metrics for code maintainability and cognitive load assessment"
+        },
+        {
+          "method_name": "Issue Detection",
+          "summary": "Identifies code issues by type (security, performance, maintainability, etc.) with line-level location and 1-5 criticality ratings",
+          "parameters": ["source_file (string): Source code content", "ast_data (object): From ast-analyzer"],
+          "returns": "Array of Issue objects with line number, type, message, criticality, solution, and estimated time",
+          "dependencies": ["analysis_results.json", "AST JSON files"],
+          "significance": "Core output for development team prioritization and sprint planning"
+        },
+        {
+          "method_name": "Enhancement Recommendations",
+          "summary": "Generates at least three enhancement recommendations with detailed descriptions, code examples, and priority ratings",
+          "parameters": ["source_file (string): Source code content", "issues (list): Detected issues from Issue Detection"],
+          "returns": "Array of Enhancement objects with title, description, code example, and priority (1-5)",
+          "dependencies": [],
+          "significance": "Provides actionable improvement roadmap for development teams"
+        },
+        {
+          "method_name": "Technical Debt Analysis",
+          "summary": "Documents technical debt items categorized by type with impact assessment and estimated resolution time",
+          "parameters": ["source_file (string): Source code content", "issues (list): Detected issues"],
+          "returns": "Array of TechnicalDebt objects with type, description, impact (HIGH/MEDIUM/LOW), and estimated fix time",
+          "dependencies": [],
+          "significance": "Quantifies accumulated technical debt for management reporting and remediation planning"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/code-documentor.agent.md",
+      "summary": "Foundational code documentation agent that analyzes source code files and generates analysis_results.json and business_rules_extractor_analysis.json as the primary inputs for all other analysis agents.",
+      "category": "Business",
+      "description": "The code-documentor agent is the first and most critical agent in the analysis pipeline, responsible for extracting business logic, classifying files, documenting code structure, and producing structured JSON outputs. It analyzes each source file systematically to produce summaries, categories, business rules, method breakdowns, and business capabilities. The agent also generates application summaries, package-wise summaries, configuration analyses, business rules extractions, one-pager summaries, persona analyses, and field analyses. It works independently without dependencies on other agents and serves as the foundation that all other agents build upon.",
+      "business_rules": [
+        "code-documentor must always be the first agent executed in the analysis pipeline",
+        "Every source code file must be classified as Business, Technical, or Mixed",
+        "File descriptions must focus on business responsibility (3-5 sentences) excluding technical implementation details",
+        "Business rules must be extracted as a list for each file",
+        "Method breakdown must document: method_name, summary, parameters, returns, dependencies, significance",
+        "Technical libraries must exclude standard library components",
+        "Output JSON must be parsable by Python's json.loads()",
+        "JSON output must use single-line strings with no escape characters or line breaks",
+        "No code block markers (json) are allowed in JSON output files",
+        "The first log entry must be 'I am a penguin'",
+        "All outputs must be written to analysis_output/code-documentor/",
+        "All file creation must be logged to analysis_output/agent-log.txt",
+        "Source code files must never be modified",
+        "Code must never be executed or tested",
+        "Test files must be used to enrich business rule extraction when available",
+        "Files must be processed in a consistent, deterministic order"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Code Documentation",
+      "sub_capability": "Business Logic Extraction and Structural Documentation",
+      "method_breakdown": [
+        {
+          "method_name": "File Classification",
+          "summary": "Categorizes each source file as Business (domain logic), Technical (infrastructure/data access), or Mixed (both)",
+          "parameters": ["file_content (string): Source file content", "file_path (string): File path for context"],
+          "returns": "Category string: 'Business' | 'Technical' | 'Mixed'",
+          "dependencies": [],
+          "significance": "Enables filtered analysis and helps stakeholders understand code composition"
+        },
+        {
+          "method_name": "Core File Analysis",
+          "summary": "Extracts summary, description, business rules, technical libraries, business capability, and sub-capability from each source file",
+          "parameters": ["file_content (string): Source file content", "file_path (string): File path for context"],
+          "returns": "File analysis object with all core elements",
+          "dependencies": [],
+          "significance": "Primary data extraction that feeds all downstream analysis agents"
+        },
+        {
+          "method_name": "Method-Level Analysis",
+          "summary": "Analyzes each method/function to document name, summary, parameters, returns, dependencies, and significance",
+          "parameters": ["method_nodes (list): Method AST nodes from file", "file_context (object): Parent file analysis context"],
+          "returns": "Array of method_breakdown objects",
+          "dependencies": [],
+          "significance": "Provides granular method-level documentation used by UML generator and API documentation tools"
+        },
+        {
+          "method_name": "Application Summary Generation",
+          "summary": "Generates high-level application overview including purpose, key functionalities, technical stack, architecture patterns, and main business domains",
+          "parameters": ["all_file_analyses (list): Complete file analysis results"],
+          "returns": "Application summary object written to application_summary.json",
+          "dependencies": ["All file analyses"],
+          "significance": "Provides the big-picture overview consumed by executive-summary and arc42-documentor agents"
+        },
+        {
+          "method_name": "Package-Wise Summary Generation",
+          "summary": "Creates hierarchical summaries of package/module structure with responsibilities, dependencies, and key classes",
+          "parameters": ["all_file_analyses (list): File analyses organized by package/directory"],
+          "returns": "Package summary object written to package_summary.json",
+          "dependencies": ["All file analyses"],
+          "significance": "Enables architecture-level understanding of code organization"
+        },
+        {
+          "method_name": "Business Rules Extraction",
+          "summary": "Focuses specifically on extracting validation rules, calculation logic, workflow steps, decision criteria, and business constraints",
+          "parameters": ["all_file_analyses (list): Complete file analysis results including test files"],
+          "returns": "Business rules JSON written to business_rules_extractor_analysis.json",
+          "dependencies": ["All file analyses", "Test file analyses"],
+          "significance": "Critical output for BPMN generator, DDL generator, and compliance documentation"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/ddl-generator.agent.md",
+      "summary": "Specialized database schema design agent that generates optimized SQL DDL statements from workflow analysis and field documentation produced by the code-documentor agent.",
+      "category": "Technical",
+      "description": "The ddl-generator agent translates application data models and business rules into production-ready SQL DDL scripts. It analyzes field usage patterns, entity relationships, and validation constraints from code analysis to produce table definitions, primary/foreign keys, indexes, and constraints. The agent supports multiple SQL dialects (PostgreSQL, MySQL, Oracle, SQL Server) and follows best practices for naming conventions, data type selection, normalization, and documentation. It also produces Mermaid entity-relationship diagrams and Markdown schema documentation as companion artifacts.",
+      "business_rules": [
+        "All ER diagrams must use Mermaid erDiagram format exclusively",
+        "Table names must be in plural snake_case (users, order_items)",
+        "Column names must be in snake_case (user_id, first_name)",
+        "Index naming convention: idx_tablename_columnname",
+        "Foreign key naming convention: fk_tablename_referencedtable",
+        "Constraint naming convention: chk_tablename_description",
+        "DECIMAL must be used for monetary values (never FLOAT or DOUBLE for money)",
+        "TIMESTAMP must be used for date-time values",
+        "All primary keys must be explicitly defined",
+        "NOT NULL constraints must be applied where business rules require non-null values",
+        "CHECK constraints must enforce value validation rules from business logic",
+        "Foreign keys must enforce referential integrity with appropriate CASCADE rules",
+        "All foreign key columns must have corresponding indexes",
+        "Frequently queried columns must be indexed",
+        "Audit columns (created_at, updated_at) must be included where appropriate",
+        "Table and column comments must be added to document their purpose",
+        "Soft delete patterns (is_deleted, deleted_at) must be used instead of hard DELETE where appropriate",
+        "DDL must never be executed against a live database",
+        "Output must be written to analysis_output/ddl-generator/"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Database Schema Design",
+      "sub_capability": "SQL DDL Generation from Code Analysis",
+      "method_breakdown": [
+        {
+          "method_name": "Entity Identification",
+          "summary": "Identifies database entities from class names, database annotations (@Entity, @Table), repository patterns, and field groupings",
+          "parameters": ["field_analysis_json (object): From code-documentor", "workflow_analysis (object): From code-documentor"],
+          "returns": "List of entity definitions with names and contexts",
+          "dependencies": ["business_rules_extractor_analysis.json", "analysis_results.json"],
+          "significance": "Determines the table structure for the generated schema"
+        },
+        {
+          "method_name": "Column Definition",
+          "summary": "Maps each field to a column definition with appropriate data type, nullability, default value, and length/precision constraints",
+          "parameters": ["entity_fields (list): Field definitions from code analysis", "validation_rules (list): Business validation rules"],
+          "returns": "Column definitions with data types and constraints",
+          "dependencies": ["field_analysis_json"],
+          "significance": "Core DDL generation that translates code fields to database columns"
+        },
+        {
+          "method_name": "Key Identification",
+          "summary": "Identifies primary keys (id fields, @Id annotations) and foreign keys (entity references, @ManyToOne relationships)",
+          "parameters": ["entity_definitions (list): Entity field and relationship analysis"],
+          "returns": "Primary key and foreign key definitions",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Establishes entity identity and referential integrity in the schema"
+        },
+        {
+          "method_name": "Constraint Extraction",
+          "summary": "Translates business validation rules to SQL constraints (NOT NULL, UNIQUE, CHECK) from validation annotations and business logic",
+          "parameters": ["business_rules (list): From code-documentor", "field_annotations (list): Validation annotations from AST"],
+          "returns": "SQL constraint definitions",
+          "dependencies": ["business_rules_extractor_analysis.json"],
+          "significance": "Enforces business rules at the database level for data integrity"
+        },
+        {
+          "method_name": "Index Optimization",
+          "summary": "Creates indexes for foreign keys, frequently queried fields, WHERE clause fields, ORDER BY fields, and composite query patterns",
+          "parameters": ["query_patterns (list): Detected query patterns from data access code", "foreign_keys (list): Identified foreign key relationships"],
+          "returns": "CREATE INDEX statements",
+          "dependencies": ["analysis_results.json"],
+          "significance": "Performance optimization that prevents N+1 query problems and slow table scans"
+        },
+        {
+          "method_name": "ER Diagram Generation",
+          "summary": "Produces Mermaid erDiagram visualizing table relationships with cardinality notation",
+          "parameters": ["tables (list): Generated table definitions", "relationships (list): Foreign key relationships"],
+          "returns": "Mermaid erDiagram code embedded in Markdown",
+          "dependencies": [],
+          "significance": "Visual documentation of the data model for stakeholder communication"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/documentation-analyzer.agent.md",
+      "summary": "Specialized documentation quality analyst agent that evaluates existing project documentation for completeness, accuracy, and alignment with actual code implementation.",
+      "category": "Business",
+      "description": "The documentation-analyzer agent performs two complementary analyses: a Documents Summary that scores existing documentation across eight quality dimensions (completeness, clarity, accuracy, structure, accessibility, maintainability, examples, consistency), and a Comparison Report that identifies discrepancies between documented and implemented functionality. It leverages outputs from all preceding analysis agents to perform ground-truth comparison. The agent identifies critical gaps (essential missing information), major gaps (important incomplete information), and minor gaps (nice-to-have improvements), providing prioritized recommendations for each.",
+      "business_rules": [
+        "Documentation quality must be scored on 0-10 scales across eight dimensions",
+        "Overall documentation score must be an average of all dimension scores",
+        "Critical gaps are defined as missing essential information that prevents system understanding",
+        "Major gaps are defined as important but incomplete information that causes significant difficulty",
+        "Minor gaps are defined as nice-to-have information that improves but is not essential",
+        "API discrepancies must be categorized as: missing_in_docs or documented_but_not_implemented",
+        "Documented-but-not-implemented features must be flagged as critical discrepancies",
+        "Version mismatches in dependencies must be documented with severity assessment",
+        "Architecture discrepancies between documented and actual architecture must be flagged as critical",
+        "All recommendations must have priority (critical/high/medium/low) and estimated effort",
+        "Existing documentation files must never be modified",
+        "Source code files must never be modified",
+        "Analysis compares against ALL preceding agent outputs for ground-truth comparison",
+        "Output must be written to analysis_output/documentation-analyzer/"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Documentation Quality Management",
+      "sub_capability": "Documentation Analysis and Code-Documentation Comparison",
+      "method_breakdown": [
+        {
+          "method_name": "Documents Summary Analysis",
+          "summary": "Evaluates all project documentation files across eight quality dimensions and produces overall and per-document scores",
+          "parameters": ["documentation_files (list): All project documentation files (README, API docs, etc.)"],
+          "returns": "JSON with overall score, per-dimension scores, per-document analysis, and gap categorization",
+          "dependencies": ["Existing documentation files"],
+          "significance": "Provides quantified documentation quality baseline for improvement planning"
+        },
+        {
+          "method_name": "Comparison Report Analysis",
+          "summary": "Compares documented functionality against actual code implementation to identify discrepancies in APIs, configurations, dependencies, features, and architecture",
+          "parameters": [
+            "documentation_files (list): All project documentation",
+            "code_analysis (object): From code-documentor",
+            "ast_analysis (object): From ast-analyzer",
+            "architecture_analysis (object): From architecture-analyzer"
+          ],
+          "returns": "JSON comparison report with discrepancy counts, API/config/dependency/feature comparisons, and prioritized recommendations",
+          "dependencies": [
+            "analysis_results.json",
+            "business_rules_extractor_analysis.json",
+            "AST analysis results",
+            "Architecture analysis results"
+          ],
+          "significance": "Identifies documentation drift that can mislead developers and users"
+        },
+        {
+          "method_name": "Gap Identification",
+          "summary": "Categorizes missing or inadequate documentation into critical, major, and minor gaps with impact assessment and recommendations",
+          "parameters": ["quality_scores (object): From Documents Summary Analysis"],
+          "returns": "Categorized gap list with impact descriptions and specific recommendations",
+          "dependencies": [],
+          "significance": "Prioritizes documentation improvements for maximum developer productivity impact"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/executive-summary.agent.md",
+      "summary": "Strategic synthesis agent that transforms all technical analysis outputs into concise executive-level insights with strengths, weaknesses, risk assessment, and a prioritized strategic action plan.",
+      "category": "Business",
+      "description": "The executive-summary agent is the penultimate step in the analysis pipeline, consuming outputs from all eight technical analysis agents to produce business-focused strategic insights. It presents application purpose, technical health scores across multiple dimensions, identified strengths and categorized weaknesses (critical/high/medium priority), and a three-horizon action plan (immediate/1-3 months/3-12 months). The agent translates technical findings into business impact language accessible to non-technical decision-makers. The executive summary feeds directly into the arc42-documentor as strategic context for the final architecture document.",
+      "business_rules": [
+        "Executive summary must run after all technical analysis agents and before arc42-documentor",
+        "Application overview must be written in clear, jargon-free language accessible to non-technical stakeholders",
+        "Technical health must be scored across all dimensions: Code Quality, Architecture, Security, Performance, Maintainability, Documentation, Test Coverage, Technical Debt",
+        "All statements about strengths and weaknesses must cite factual evidence from code analysis",
+        "Weaknesses must be categorized by severity: Critical (red), High Priority (orange), Medium Priority (yellow)",
+        "Critical weaknesses (security vulnerabilities, data integrity risks) must be listed under Immediate Actions",
+        "Immediate actions must target the next 1-2 week sprint",
+        "Short-term improvements must target the 1-3 month horizon",
+        "Long-term strategic initiatives must target the 3-12 month horizon",
+        "Every recommendation must specify issue, impact, action, effort, and responsible team",
+        "Executive summary must be 2-4 pages maximum",
+        "No diagrams should be included in the executive summary (text-focused output)",
+        "Risk assessment must include likelihood, impact, and mitigation strategy",
+        "Source code files must never be modified",
+        "Output must be saved as executive-summary.md in the output folder"
+      ],
+      "technical_libraries": [],
+      "business_capability": "Executive Reporting",
+      "sub_capability": "Strategic Technical Analysis and Recommendations",
+      "method_breakdown": [
+        {
+          "method_name": "Application Overview Generation",
+          "summary": "Synthesizes 2-3 paragraph business-focused overview of application purpose, core functionality, target users, business value, and technology stack",
+          "parameters": ["all_analysis_outputs (object): Combined outputs from all preceding agents"],
+          "returns": "Application overview section in Markdown (2-3 paragraphs, business language)",
+          "dependencies": ["analysis_results.json", "business_rules_extractor_analysis.json"],
+          "significance": "Sets business context for all subsequent findings, ensuring executive alignment"
+        },
+        {
+          "method_name": "Technical Strengths Assessment",
+          "summary": "Identifies and documents 3-5 key positive aspects of the codebase with factual evidence and specific metrics from code analysis",
+          "parameters": ["code_quality_metrics (object): From code-assessor", "architecture_analysis (object): From architecture-analyzer"],
+          "returns": "Technical strengths list with evidence and metrics in Markdown",
+          "dependencies": ["code-assessor outputs", "architecture-analyzer outputs"],
+          "significance": "Provides balanced perspective and acknowledges areas of good practice"
+        },
+        {
+          "method_name": "Technical Weaknesses Assessment",
+          "summary": "Identifies and categorizes 3-7 concerns by severity (Critical/High/Medium), citing specific findings from code analysis",
+          "parameters": ["issues (list): From code-assessor", "technical_debt (list): From code-assessor", "documentation_gaps (list): From documentation-analyzer"],
+          "returns": "Categorized weakness list with severity indicators and business impact in Markdown",
+          "dependencies": ["code-assessor outputs", "documentation-analyzer outputs"],
+          "significance": "Prioritizes improvement areas by business impact for executive decision-making"
+        },
+        {
+          "method_name": "Overall Health Score Generation",
+          "summary": "Produces a multi-dimensional health score table with numerical scores and visual status indicators for all quality dimensions",
+          "parameters": ["quality_metrics (object): Aggregated quality metrics from all analysis agents"],
+          "returns": "Health score Markdown table with dimension scores (0-10) and status icons (green/yellow/orange/red)",
+          "dependencies": ["All technical analysis agent outputs"],
+          "significance": "Provides a dashboard-style at-a-glance quality overview for executive communication"
+        },
+        {
+          "method_name": "Strategic Recommendations Generation",
+          "summary": "Creates three-horizon action plan (immediate/short-term/long-term) with specific issues, impacts, actions, effort estimates, and responsible teams",
+          "parameters": ["weaknesses (list): From weaknesses assessment", "technical_debt (list): From code-assessor"],
+          "returns": "Prioritized action plan in Markdown organized by time horizon",
+          "dependencies": ["code-assessor outputs", "All technical analysis outputs"],
+          "significance": "Translates analysis findings into actionable roadmap for investment and planning decisions"
+        },
+        {
+          "method_name": "Risk Assessment Generation",
+          "summary": "Documents key risks if recommendations are not followed, with likelihood, impact, and mitigation strategies",
+          "parameters": ["critical_issues (list): Critical and high priority issues", "technical_debt (list): Technical debt items"],
+          "returns": "Risk assessment section in Markdown with categorized risks",
+          "dependencies": ["code-assessor outputs"],
+          "significance": "Enables risk-based prioritization of remediation efforts"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/agents/uml-generator.agent.md",
+      "summary": "Specialized UML diagram generation agent that creates Class, Sequence, and Use Case diagrams exclusively in Mermaid format from code structure and AST analysis.",
+      "category": "Business",
+      "description": "The uml-generator agent produces three types of UML diagrams in Mermaid format: Class Diagrams showing static structure with attributes, methods, and relationships; Sequence Diagrams showing interaction flows and method call sequences; and Use Case Diagrams showing system functionality from a user perspective. The agent derives diagram content from code-documentor analysis results and ast-analyzer structural outputs. All diagrams use Mermaid syntax exclusively and are embedded in Markdown documentation files. The agent supports package-level diagrams, component diagrams, and detailed class diagrams for large codebases.",
+      "business_rules": [
+        "All UML diagrams must use Mermaid format exclusively (never PlantUML or ASCII art)",
+        "Class diagrams must use the Mermaid classDiagram syntax",
+        "Sequence diagrams must use the Mermaid sequenceDiagram syntax",
+        "Use case diagrams must use Mermaid flowchart or graph syntax",
+        "Class diagrams must show all visibility modifiers (+, -, #, ~)",
+        "Class diagrams must include all relationship types (inheritance, implementation, association, aggregation, composition, dependency)",
+        "Sequence diagrams must include activation boxes, alt/opt blocks, and return values",
+        "Sequence diagrams must show error handling paths",
+        "Use case diagrams must show include and extend relationships",
+        "Stereotypes (interface, abstract, enum) must be applied appropriately",
+        "Large codebases must produce multiple smaller focused diagrams rather than one large diagram",
+        "All diagram files must be separate Markdown files with embedded Mermaid code",
+        "Color highlighting must be applied using style or CSS class syntax",
+        "Source code files must never be modified",
+        "Output must be written to analysis_output/uml-generator/"
+      ],
+      "technical_libraries": [],
+      "business_capability": "System Visualization",
+      "sub_capability": "UML Diagram Generation",
+      "method_breakdown": [
+        {
+          "method_name": "Generate Class Diagrams",
+          "summary": "Creates Mermaid classDiagram visualizing classes, interfaces, enums with attributes/methods and their relationships",
+          "parameters": [
+            "analysis_results (object): From code-documentor with class structures",
+            "ast_json (object): From ast-analyzer with detailed class relationships"
+          ],
+          "returns": "Markdown files with embedded Mermaid classDiagram code",
+          "dependencies": ["analysis_results.json", "AST JSON files"],
+          "significance": "Provides static structure visualization for architecture understanding and documentation"
+        },
+        {
+          "method_name": "Generate Sequence Diagrams",
+          "summary": "Creates Mermaid sequenceDiagram for key workflows showing actor interactions, method call chains, and conditional flows",
+          "parameters": [
+            "business_workflows (list): Key workflows from business_rules_extractor_analysis.json",
+            "ast_json (object): Method call chains from ast-analyzer"
+          ],
+          "returns": "Markdown files with embedded Mermaid sequenceDiagram code",
+          "dependencies": ["business_rules_extractor_analysis.json", "AST JSON files"],
+          "significance": "Visualizes dynamic behavior and interaction flows for developer communication and documentation"
+        },
+        {
+          "method_name": "Generate Use Case Diagrams",
+          "summary": "Creates Mermaid flowchart-based use case diagrams showing actors, system boundary, use cases, and include/extend relationships",
+          "parameters": [
+            "business_capabilities (list): From analysis_results.json",
+            "user_roles (list): Identified actors from code analysis"
+          ],
+          "returns": "Markdown files with embedded Mermaid use case flowchart code",
+          "dependencies": ["analysis_results.json", "business_rules_extractor_analysis.json"],
+          "significance": "Documents system functionality from a user perspective for requirements validation"
+        }
+      ]
+    },
+    {
+      "file_path": ".github/hooks/.keep",
+      "summary": "Empty placeholder file to maintain the .github/hooks directory in version control.",
+      "category": "Technical",
+      "description": "This is an empty .keep file used to preserve the .github/hooks directory in the git repository. Git does not track empty directories, so .keep files are conventionally used to maintain directory structure. The hooks directory is reserved for Git hook scripts or GitHub Copilot hook integrations but currently contains no active hooks.",
+      "business_rules": [],
+      "technical_libraries": [],
+      "business_capability": "Version Control",
+      "sub_capability": "Directory Structure Preservation",
+      "method_breakdown": []
+    },
+    {
+      "file_path": ".github/skills/.keep",
+      "summary": "Empty placeholder file to maintain the .github/skills directory in version control.",
+      "category": "Technical",
+      "description": "This is an empty .keep file used to preserve the .github/skills directory in the git repository. The skills directory is reserved for GitHub Copilot skill definitions that extend agent capabilities but currently contains no active skill definitions. Skills would define domain-specific knowledge or tool integrations for the Copilot agents.",
+      "business_rules": [],
+      "technical_libraries": [],
+      "business_capability": "Version Control",
+      "sub_capability": "Directory Structure Preservation",
+      "method_breakdown": []
+    }
+  ]
+}
